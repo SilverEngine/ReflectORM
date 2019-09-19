@@ -7,73 +7,77 @@ use Silver\Database\Query;
 class Literal extends Part
 {
 
-    private $value;
+	private $value;
 
-    public function __construct($value) 
-    {
-        $this->value = $value;
-    }
+	public function __construct($value)
+	{
+		$this->value = $value;
+	}
 
-    public static function null() 
-    {
-        return new self(null);
-    }
+	public static function null(): object
+	{
+		return new self(null);
+	}
 
-    public static function true() 
-    {
-        return new self(true);
-    }
+	public static function true(): object
+	{
+		return new self(true);
+	}
 
-    public static function false() 
-    {
-        return new self(false);
-    }
+	public static function false(): object
+	{
+		return new self(false);
+	}
 
-    public static function wild() 
-    {
-        return new Raw('*');
-    }
+	public static function wild(): object
+	{
+		return new Raw('*');
+	}
 
-    public static function compile($q) 
-    {
-        $value = $q->value;
+	public static function compile(object $q): array
+	{
+		$value = $q->value;
 
-        if(is_array($value)) {
-            return '(' . implode(', ', array_map('self::lit', $value)) . ')';
-        } else {
-            return self::lit($value);
-        }
-    }
+		if (is_array($value)) {
+			return [ '(' . implode(', ', array_map('self::lit', $value)) . ')' ];
+		} else {
+			return [ self::lit($value) ];
+		}
+	}
 
-    private static function lit($v) 
-    {
-        if($r = static::tryBool($v)) {
-            return $r;
-        }
+	private static function lit($v): string
+	{
+		if ($r = static::tryBool($v)) {
+			return $r;
+		}
 
-        if($r = static::tryNull($v)) {
-            return $r;
-        }
+		if ($r = static::tryNull($v)) {
+			return $r;
+		}
 
-        return (string) Query::quote($v);
-    }
+		if (is_numeric($v)) {
+			return (string) $v;
+		}
 
-    protected static function tryBool($v) 
-    {
-        if($v === true) {
-            return 't';
-        }
-        if($v === false) {
-            return 'f';
-        }
-        return null;
-    }
+		return (string) Query::quote($v);
+	}
 
-    protected static function tryNull($v) 
-    {
-        if($v === null) {
-            return 'NULL';
-        }
-        return null;
-    }
+	protected static function tryBool($v): ?string
+	{
+		if ($v === true) {
+			return 't';
+		}
+		if ($v === false) {
+			return 'f';
+		}
+		return null;
+	}
+
+	protected static function tryNull($v): ?string
+	{
+		if ($v === null) {
+			return 'NULL';
+		}
+		return null;
+	}
 }

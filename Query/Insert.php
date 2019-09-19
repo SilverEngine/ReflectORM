@@ -10,92 +10,92 @@ use Silver\Database\Source;
 
 class Insert extends Query
 {
-    private $table;
-    private $headers = null;
-    private $data = [];
+	private $table;
+	private $headers = null;
+	private $data = [];
 
-    public function __construct($table, $data = null) 
-    {
-        $source = Source::make($table);
-        $this->addSource($source);
+	public function __construct(string $table, array $data = null)
+	{
+		$source = Source::make($table);
+		$this->addSource($source);
 
-        $this->table = Table::ensure($source);
-        if($data !== null) {
-            $this->fill($data);
-        }
-    }
+		$this->table = Table::ensure($source);
+		if ($data !== null) {
+			$this->fill($data);
+		}
+	}
 
-    public function fill($data) 
-    {
-        if(!is_array($data)) {
-            throw new \Exception("Data must be array.");
-        }
+	public function fill(array $data)
+	{
+		if (!is_array($data)) {
+			throw new \Exception("Data must be array.");
+		}
 
-        // Multiple data
-        if(isset($data[0]) && is_array($data[0])) {
-            foreach($data as $d) {
-                $this->fill($d);
-            }
-            return $this;
-        }
-        
-        if(isset($data[0])) {
-            if($this->headers !== null) {
-                $this->headers_exception();
-            }
-            $this->data[] = $this->data_array($data);
-        } else {
-            $headers = array_keys($data);
-            $data = array_values($data);
+		// Multiple data
+		if (isset($data[0]) && is_array($data[0])) {
+			foreach($data as $d) {
+				$this->fill($d);
+			}
+			return $this;
+		}
 
-            if($this->headers === null) {
-                if(count($this->data)) {
-                    $this->headers_exception();
-                } else {
-                    $this->headers = $headers;
-                }
-            } else {
-                if($this->headers != $headers) {
-                    $this->headers_exception();
-                }
-            }
+		if (isset($data[0])) {
+			if ($this->headers !== null) {
+				$this->headers_exception();
+			}
+			$this->data[] = $this->data_array($data);
+		} else {
+			$headers = array_keys($data);
+			$data = array_values($data);
 
-            $this->data[] = $this->data_array($data);
-        }
-        return $this;
-    }
+			if ($this->headers === null) {
+				if (count($this->data)) {
+					$this->headers_exception();
+				} else {
+					$this->headers = $headers;
+				}
+			} else {
+				if ($this->headers != $headers) {
+					$this->headers_exception();
+				}
+			}
 
-    private function data_array($data) 
-    {
-        return array_map(
-            function ($d) {
-                return Value::ensure($d);
-            }, $data
-        );
-    }
+			$this->data[] = $this->data_array($data);
+		}
+		return $this;
+	}
 
-    private function headers_exception() 
-    {
-        throw new \Exception("All data in statement must have same format!");
-    }
-    
-    protected static function compile($q) 
-    {
-        $sql = 'INSERT INTO ' . $q->table;
+	private function data_array(array $data) : array
+	{
+		return array_map(
+			function ($d) {
+				return Value::ensure($d);
+			}, $data
+		);
+	}
 
-        if($q->headers) {
-            $headers = ColumnList::ensure($q->headers);
-            $sql .= ' (' . $headers . ')';
-        }
+	private function headers_exception(): void
+	{
+		throw new \Exception("All data in statement must have same format!");
+	}
 
-        $sql .= ' VALUES ' . implode(
-            ', ', array_map(
-                function ($data) {
-                    return '(' . implode(', ', $data) . ')';
-                }, $q->data
-            )
-        );
+	protected static function compile(object $q): array
+	{
+		$sql = 'INSERT INTO ' . $q->table;
 
-        return $sql;
-    }
+		if ($q->headers) {
+			$headers = ColumnList::ensure($q->headers);
+			$sql .= ' (' . $headers . ')';
+		}
+
+		$sql .= ' VALUES ' . implode(
+			', ', array_map(
+				function ($data) {
+					return '(' . implode(', ', $data) . ')';
+				}, $q->data
+			)
+		);
+
+		return [ $sql ];
+	}
 }

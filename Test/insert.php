@@ -1,6 +1,6 @@
 <?php
 
-namespace Silver\Test\Database;
+namespace Silver\Database\Test;
 
 use Silver\Database\Query;
 
