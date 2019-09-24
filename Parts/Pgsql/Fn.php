@@ -11,27 +11,27 @@ use Silver\Database\Parts\Raw;
 class Fn extends P
 {
 
-    protected static function mapFn($fn, $args) 
-    {
-        switch($fn) {
-        case 'GROUP_CONCAT':
-            return [
-                'string_agg',
-                [
-                    // Cast into string
-                    Parts::ensure(
-                        [
-                        Raw::ensure("'' ||"),
-                        $args[0],
+	protected static function mapFn(string $fn, array $args): array
+	{
+		switch($fn) {
+		case 'GROUP_CONCAT':
+			return [
+				'string_agg',
+				[
+					// Cast into string
+					Parts::ensure(
+						[
+						Raw::ensure("'' ||"),
+						$args[0],
 
-                        ]
-                    ),
-                    $args[1]
-                ]
-            ];
-        default:
-            return [$fn, $args];
-        }
-    }
+						]
+					),
+					$args[1]
+				]
+			];
+		default:
+			return [$fn, $args];
+		}
+	}
 
 }

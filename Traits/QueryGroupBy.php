@@ -7,19 +7,19 @@ use Silver\Database\Parts\ColumnList;
 
 trait QueryGroupBy
 {
-    private $groupby = [];
+	private $groupby = [];
 
-    public function groupBy($column) 
-    {
-        $this->groupby[] = Column::ensure($column);
-        return $this;
-    }
+	public function groupBy($column): object
+	{
+		$this->groupby[] = Column::ensure($column);
+		return $this;
+	}
 
-    protected static function compileGroupBy($q) 
-    {
-        if (!empty($q->groupby)) {
-            return " GROUP BY " . ColumnList::ensure($q->groupby);
-        }
-        return '';
-    }
+	protected static function compileGroupBy(object $q): string
+	{
+		if (!empty($q->groupby)) {
+			return " GROUP BY " . ColumnList::ensure($q->groupby);
+		}
+		return '';
+	}
 }

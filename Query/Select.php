@@ -16,24 +16,26 @@ use Silver\Database\Parts\Literal;
 
 class Select extends Query
 {
-    use QueryColumns, QueryFrom, QueryJoin, QueryWH, QueryGroupBy, QueryOrder, QueryLimit, QueryUnion;
-    
-    public function __construct($columns = []) 
-    {
-        $this->setColumns($columns ? $columns : [Literal::wild()]);
-    }
+	use QueryColumns, QueryFrom, QueryJoin, QueryWH, QueryGroupBy, QueryOrder, QueryLimit, QueryUnion;
 
-    protected static function compile($q) 
-    {
-        return 'SELECT'
-            . static::compileColumns($q)
-            . static::compileFrom($q)
-            . static::compileJoin($q)
-            . static::compileWhere($q)
-            . static::compileGroupBy($q)
-            . static::compileHaving($q)
-            . static::compileOrder($q)
-            . static::compileLimit($q)
-            . static::compileUnion($q);
-    }
+	public function __construct(array $columns = [])
+	{
+		$this->setColumns($columns ?: [Literal::wild()]);
+	}
+
+	protected static function compile(object $q): array
+	{
+		$sql = 'SELECT'
+			. static::compileColumns($q)
+			. static::compileFrom($q)
+			. static::compileJoin($q)
+			. static::compileWhere($q)
+			. static::compileGroupBy($q)
+			. static::compileHaving($q)
+			. static::compileOrder($q)
+			. static::compileLimit($q)
+			. static::compileUnion($q);
+
+		return [ $sql ];
+	}
 }

@@ -4,30 +4,30 @@ namespace Silver\Database\Parts;
 
 class Filter extends Parts
 {
-    private $condition;
-    private $not = false;
-    
-    public function __construct($column, $op, $value, $not = false) 
-    {
-        $this->condition = Parts::ensure(
-            [
-            Column::ensure($column),
-            Raw::ensure($op),
-            Value::ensure($value),
-            ]
-        );
+	private $condition;
+	private $not = false;
 
-        $this->not = $not;
-    }
+	public function __construct($column, string $op, $value, bool $not = false)
+	{
+		$this->condition = Parts::ensure(
+			[
+			Column::ensure($column),
+			Raw::ensure($op),
+			Value::ensure($value),
+			]
+		);
 
-    protected static function compile($q) 
-    {
-        $ret = (string) $q->condition;
+		$this->not = $not;
+	}
 
-        if($q->not) {
-            $ret = 'NOT ' . $ret;
-        }
+	protected static function compile(object $q): array
+	{
+		$ret = (string) $q->condition;
 
-        return $ret;
-    }
+		if ($q->not) {
+			$ret = 'NOT ' . $ret;
+		}
+
+		return [ $ret ];
+	}
 }

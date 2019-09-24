@@ -6,32 +6,32 @@ use Silver\Database\Parts\Name;
 
 trait QueryOrder
 {
-    private $order = [];
+	private $order = [];
 
-    public function orderBy($column, $dir = 'asc') 
-    {
-        $column = Name::ensure($column);
+	public function orderBy($column, string $dir = 'asc'): object
+	{
+		$column = Name::ensure($column);
 
-        $dir = strtoupper($dir);
-        if(!($dir == 'ASC' || $dir == 'DESC')) {
-            throw new \Exception("Unknown order direction '$dir'");
-        }
+		$dir = strtoupper($dir);
+		if (!($dir == 'ASC' || $dir == 'DESC')) {
+			throw new \Exception("Unknown order direction '$dir'");
+		}
 
-        $this->order[] = [$column, $dir];
-        return $this;
-    }
+		$this->order[] = [$column, $dir];
+		return $this;
+	}
 
-    protected static function compileOrder($q) 
-    {
-        if(count($q->order)) {
-            $parts = array_map(
-                function ($p) {
-                    return $p[0] . ' ' . $p[1];
-                }, $q->order
-            );
-            return ' ORDER BY ' . implode(', ', $parts);
-        }
-        return '';
-    }
+	protected static function compileOrder(object $q): string
+	{
+		if (count($q->order)) {
+			$parts = array_map(
+				function ($p) {
+					return $p[0] . ' ' . $p[1];
+				}, $q->order
+			);
+			return ' ORDER BY ' . implode(', ', $parts);
+		}
+		return '';
+	}
 
 }

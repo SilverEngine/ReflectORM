@@ -8,29 +8,28 @@ use Silver\Database\Source;
 
 trait QueryFrom
 {
-    private $tables = [];
+	private $tables = [];
 
-    public function from($table, $alias = null) 
-    {
+	public function from($table, string $alias = null): object
+	{
+		if (is_callable($table)) {
+			$table = $table();
+		}
 
-        if(is_callable($table)) {
-            $table = $table();
-        }
+		// Make source from table
+		$source = Source::make($table, $alias);
+		$this->addSource($source);
 
-        // Make source from table
-        $source = Source::make($table, $alias);
-        $this->addSource($source);
+		$table = Table::ensure($source);
+		$this->tables[] = $table;
+		return $this;
+	}
 
-        $table = Table::ensure($source);
-        $this->tables[] = $table;
-        return $this;
-    }
-
-    protected static function compileFrom($q) 
-    {
-        if($q->tables) {
-            return ' FROM ' . implode(', ', $q->tables);
-        }
-        return '';
-    }
+	protected static function compileFrom(object $q): string
+	{
+		if ($q->tables) {
+			return ' FROM ' . implode(', ', $q->tables);
+		}
+		return '';
+	}
 }

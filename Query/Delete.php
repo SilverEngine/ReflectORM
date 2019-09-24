@@ -13,23 +13,24 @@ use Silver\Database\Traits\QueryLimit;
 
 class Delete extends Query
 {
-    use QueryColumns, QueryFrom, QueryJoin, QueryWH, QueryGroupBy, QueryOrder, QueryLimit;
-    
-    public function __construct($columns = []) 
-    {
-        $this->setColumns($columns);
-    }
+	use QueryColumns, QueryFrom, QueryJoin, QueryWH, QueryGroupBy, QueryOrder, QueryLimit;
 
-    protected static function compile($q) 
-    {
-        return 'DELETE'
-            . static::compileColumns($q)
-            . static::compileFrom($q)
-            . static::compileJoin($q)
-            . static::compileWhere($q)
-            . static::compileGroupBy($q) // FIXME: remove?
-            . static::compileHaving($q) // FIXME: remove
-            . static::compileOrder($q)
-            . static::compileLimit($q);
-    }
+	public function __construct(array $columns = [])
+	{
+		$this->setColumns($columns);
+	}
+
+	protected static function compile(object $q): array
+	{
+		$sql = 'DELETE'
+			. static::compileColumns($q)
+			. static::compileFrom($q)
+			. static::compileJoin($q)
+			. static::compileWhere($q)
+			. static::compileGroupBy($q) // FIXME: remove?
+			. static::compileHaving($q) // FIXME: remove
+			. static::compileOrder($q)
+			. static::compileLimit($q);
+		return [ $sql ];
+	}
 }

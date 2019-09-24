@@ -11,24 +11,24 @@ use Silver\Database\Parts\Raw;
 class Fn extends P
 {
 
-    protected static function mapFn($fn, $args) 
-    {
-        switch($fn) {
-        case 'GROUP_CONCAT':
-            return [
-                'GROUP_CONCAT',
-                [
-                    Parts::ensure(
-                        [
-                        $args[0],
-                        Raw::ensure('SEPARATOR'),
-                        $args[1]
-                        ]
-                    )
-                ]
-            ];
-        default:
-            return [$fn, $args];
-        }
-    }
+	protected static function mapFn(string $fn, array $args): array
+	{
+		switch($fn) {
+		case 'GROUP_CONCAT':
+			return [
+				'GROUP_CONCAT',
+				[
+					Parts::ensure(
+						[
+						$args[0],
+						Raw::ensure('SEPARATOR'),
+						$args[1]
+						]
+					)
+				]
+			];
+		default:
+			return [$fn, $args];
+		}
+	}
 }
