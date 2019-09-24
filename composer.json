@@ -1,0 +1,15 @@
+{
+  "name": "silverengine/reflectorm",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "SilverEngine",
+      "email": "enginesilver@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.2",
+  }
+}
